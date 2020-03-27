@@ -1,0 +1,152 @@
+import urllib.request, json
+import math
+from math import radians, sin, cos, acos, sqrt, atan2
+import numpy as np
+import collections
+from collections import Counter
+############## Zadanie 1##############################################
+
+with urllib.request.urlopen("https://jsonplaceholder.typicode.com/posts") as url:
+    data_posts = json.loads(url.read().decode())
+
+
+with urllib.request.urlopen("https://jsonplaceholder.typicode.com/users") as url:
+    data_users = json.loads(url.read().decode())
+
+list_1 = []
+list_2 = []
+i=-1
+for post in data_posts:
+    i=i+1
+    title = post['title']
+    body= post['body']
+    list_1.append(title) #####creating a list of titles
+    list_2.append(body) ####creating a list of posts
+
+####intertwining between titles and posts as seen in the website
+result = [None]*(len(list_1)+len(list_2))
+result[::2]=list_1
+result[1::2]=list_2
+
+########## creating 10 sets of tiles connected with posts
+s_1=""
+s_2=""
+s_3=""
+s_4=""
+s_5=""
+s_6=""
+s_7=""
+s_8=""
+s_9=""
+s_10=""
+k=-1
+s_1='\n  \n '.join(result[:20])
+s_2='\n  \n '.join(result[20:40])
+s_3='\n  \n '.join(result[40:60])
+s_4='\n  \n '.join(result[60:80])
+s_5='\n  \n '.join(result[80:100])
+s_6='\n  \n '.join(result[100:120])
+s_7='\n  \n '.join(result[120:140])
+s_8='\n  \n '.join(result[140:160])
+s_9='\n  \n '.join(result[160:180])
+s_10='\n  \n '.join(result[180:200])
+title_list = [s_1,s_2,s_3,s_4, s_5, s_6, s_7, s_8, s_9, s_10]
+
+    
+m=-1
+
+for user in data_users:
+    i_d = user['id']
+    name = user['name']
+    username = user['username']
+    email = user['email']
+    street = user['address']['street']
+    suite = user['address']['suite']
+    city = user['address']['city']
+    zipcode = user['address']['zipcode']
+    latitude = user['address']['geo']['lat']
+    lng = user['address']['geo']['lng']
+    phone = user['phone']
+    website= user['website']
+    company_name=user['company']['name']
+    catchPhrase = user['company']['catchPhrase']
+    bs = user['company']['bs']
+    m= m + 1
+    print(i_d, name, username, email, street, suite, city, zipcode, latitude, lng,phone, website, company_name, catchPhrase, bs, "\n", "\n", title_list[m], "\n")
+
+
+
+#########################ZADANIE 2 ##########################################
+    
+id_list=[]
+for it in data_posts:
+    i_d = it['userId']
+    id_list.append(i_d)
+
+print("user_name napisał(a): ", id_list.count(1), "postów")
+print("user_name napisał(a): ", id_list.count(2), "postów")
+print("user_name napisał(a): ", id_list.count(3), "postów")
+print("user_name napisał(a): ", id_list.count(4), "postów")
+print("user_name napisał(a): ", id_list.count(5), "postów")
+print("user_name napisał(a): ", id_list.count(6), "postów")
+print("user_name napisał(a): ", id_list.count(7), "postów")
+print("user_name napisał(a): ", id_list.count(8), "postów")
+print("user_name napisał(a): ", id_list.count(9), "postów")
+print("user_name napisał(a): ", id_list.count(10), "postów")
+
+
+###########################ZADANIE 3##########################################
+
+print("Original list: ", list_1)
+print("\n")
+swapped = 0
+m=0
+unique_list=[]
+for i in range(len(list_1)):
+    for k in range(len(list_1)):
+        if i != k:
+            if list_1[i]==list_1[k]:
+                swapped=1
+                unique_list.append(list_1[i])
+                m=m+1
+
+if(not swapped):
+    print("List has ", m, "unique titles")
+    print("\n")
+    print("The unique title list is: ", unique_list)
+else:
+    print("List has no unique titles")
+    
+
+## Szukanie sąsiadujących ze sobą użytkowników
+#################### Zadanie 4 ###########################################################
+print("\n")
+list_long=[]
+list_lat=[]
+for item in data_users:
+    longitude=item['address']['geo']['lng']
+    latitude_2=item['address']['geo']['lat']
+    list_long.append(longitude)
+    list_lat.append(latitude_2)
+list_10=[1]
+m=-1
+list_min=[]    
+for i in range(len(list_lat)):
+    minimum=min(e for e in list_10 if e>0)
+    print("User: ", m+1, "with user: ", list_10.index(minimum)+1)
+    
+    m=i
+    list_10=[]
+    for k in range(len(list_lat)):
+        R = 6373.0
+        lat1 = float(list_lat[m])
+        lon1 = float(list_long[m])
+        lat2 = float(list_lat[k])
+        lon2 = float(list_long[k])
+        dlon = float(lon2) - float(lon1)
+        dlat = float(lat2) - float(lat1)
+        a = (sin(dlat/2))**2 + cos(lat1) * cos(lat2) * (sin(dlon/2))**2
+        c = 2 * atan2(sqrt(a), sqrt(1-a))
+        distance = R * c
+        list_10.append(distance)
+
